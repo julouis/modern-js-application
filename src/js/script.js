@@ -1,121 +1,139 @@
-
-	// IMAGE TO URL
-	let image = ""
-	document.querySelector("#hero-image-post").addEventListener("change",(e) => {
-		const file = e.target.files[0];
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			image = reader.result.replace(/^data:image\/[a-z]+;base64,/, "");
-			console.log(image)
-		};
-		reader.readAsDataURL(file)
-	});
-	//
-	
-
-var template = document.querySelector("#template");
-var target = document.querySelector("#target");
-
 async function fetchData() {
-	let response = await fetch("https://character-database.becode.xyz/characters");
-	let data = await response.json();
+	const response = await fetch(
+		"https://character-database.becode.xyz/characters"
+	);
+	const data = await response.json();
+	return data;
+}
 
-	data.forEach(({ image, name, shortDescription, description, id}) => {
+let data = fetchData();
+console.log(data);
+
+// DISPLAY ELEMENTS
+
+var characterID = new Array();
+
+function displayHero(characters) {
+	var template = document.querySelector("#template");
+	var target = document.querySelector("#target");
+
+	characters.forEach(({ image, name, shortDescription, description, id }) => {
 		const cloneHero = template.cloneNode(true).content;
+
+		cloneHero.querySelector("#hero-name").innerHTML = `${name}`;
+		cloneHero.querySelector(
+			"#hero-short-description"
+		).innerHTML = `${shortDescription}`;
+		cloneHero.querySelector("#hero-description").innerHTML = `${description}`;
+		cloneHero.querySelector(
+			"#hero-image"
+		).innerHTML = `<img src="data:image/gif;base64,${image}" width="200" height="200">`;
+        
+
+		target.appendChild(cloneHero);
+
+		characterID.push(id);
+	});
+}
+
+
+
+/* fetchData().then(function displayHero(characters){    
+    characters.forEach(({ image, name, shortDescription, description, id}) => {
+        const cloneHero = template.cloneNode(true).content;
 		
 		cloneHero.querySelector("#hero-name").innerHTML = `${name}`;
 		cloneHero.querySelector("#hero-short-description").innerHTML = `${shortDescription}`;
 		cloneHero.querySelector("#hero-description").innerHTML = `${description}`;
         cloneHero.querySelector("#hero-image").innerHTML = `<img src="data:image/gif;base64,${image}" width="200" height="200">`;
-        cloneHero.querySelector("#modify-button");
-		
-		// MODIFY FUNCTION //
-		
-		const modifyInputs = Array.from(document.querySelector("#exampleModalModify input"));
+        
+        target.appendChild(cloneHero); 
 
-		document.querySelector("#exampleModalModify #create-hero").addEventListener("click",async function() {
-			const values = modifyInputs.map(({value}) => value.trim());	
-			console.log(values)	
-			const [name, shortDescription, description] = values;
-			
-			console.log("Try to modify input")
+        characterID.push(id)
 
-			const response = await fetch(`https://character-database.becode.xyz/characters${id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					name,
-					shortDescription,
-					description,
-					image
-				})
-				
-			})
-			console.log(response.status)
-			const modifyHero = await response.json();
-			console.log(modifyHero)
-		
-		})
+    })
+    
+}) */
 
-		// DELETE FUNCTION
+// IMAGE TO URL
 
-		cloneHero.querySelector("#delete-button").addEventListener("click",async () => {
-			console.log(id);
-			const response =await fetch(`https://character-database.becode.xyz/characters/${id}`, {
-				method: "DELETE",
-				headers: {
-                    "Content-Type": "application/json",
-				},
-			});
-				document.location.reload();
-			
-		});
-		
-		target.appendChild(cloneHero); 
-
-    });
-}
-
-
-fetchData();
+document.querySelector("#hero-image-post").addEventListener("change", (e) => {
+	const file = e.target.files[0];
+	const reader = new FileReader();
+	reader.onloadend = () => {
+		image = reader.result.replace(/^data:image\/[a-z]+;base64,/, "");
+		console.log(image);
+	};
+	reader.readAsDataURL(file);
+});
+//
 
 // POST ELEMENT
 
 const inputs = Array.from(document.querySelectorAll("#exampleModal input"));
 
-document.getElementById("create-hero").addEventListener("click", async function() {
+async function postHero () {
+    const values = inputs.map(({ value }) => value.trim());
 
-	const values = inputs.map(({value}) => value.trim());
+    console.log(values);
 
-	console.log(values)
+    const [name, shortDescription, description] = values;
 
-	const [name, shortDescription, description] = values;
+    const response = await fetch(
+        "https://character-database.becode.xyz/characters",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                shortDescription,
+                description,
+                image,
+            }),
+        }
+    );
+
+    document.location.reload();
+
+    console.log(response.status);
+    const newHero = await response.json();
+    console.log(newHero);
+}
+
+// DELETE FUNCTION
+
+async function deleteHero() {
+    const response = await fetch(`https://character-database.becode.xyz/characters/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+}
 
 
-	const response = await fetch("https://character-database.becode.xyz/characters", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
-			name,
-			shortDescription,
-			description,
-			image
-		})
-		
-	})
-	
-	document.location.reload();
-	
-	console.log(response.status)
-	const newHero = await response.json();
-	console.log(newHero)
 
-})
+// DELETE FUNCTION
+
+/* document.querySelector("#delete-button").addEventListener("click",async () => {
+    
+    const response =await fetch(`https://character-database.becode.xyz/characters/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+        document.location.reload();
+    
+}); */
 
 
-// MODIFY ELEMENT 
+data.then((characters) => {
+	displayHero(characters);
+});
 
+document.getElementById("create-hero").addEventListener("click", () => {
+    postHero();
+});
