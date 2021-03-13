@@ -13,7 +13,7 @@ console.log(data);
 
 var characterID = new Array();
 
-function displayHero(characters) {
+function displayData(characters) {
 	var template = document.querySelector("#template");
 	var target = document.querySelector("#target");
 
@@ -57,7 +57,7 @@ function displayHero(characters) {
 
 // IMAGE TO URL
 
-document.querySelector("#hero-image-post").addEventListener("change", (e) => {
+/* document.querySelector("#hero-image-post").addEventListener("change", (e) => {
 	const file = e.target.files[0];
 	const reader = new FileReader();
 	reader.onloadend = () => {
@@ -65,14 +65,25 @@ document.querySelector("#hero-image-post").addEventListener("change", (e) => {
 		console.log(image);
 	};
 	reader.readAsDataURL(file);
-});
+}); */
+
+function imageToUrl(e) {
+	const file = e.target.files[0];
+	const reader = new FileReader();
+	reader.onloadend = () => {
+		image = reader.result.replace(/^data:image\/[a-z]+;base64,/, "");
+		console.log(image);
+	};
+	reader.readAsDataURL(file);
+}
+
 //
 
 // POST ELEMENT
 
 const inputs = Array.from(document.querySelectorAll("#exampleModal input"));
 
-async function postHero () {
+async function postData () {
     const values = inputs.map(({ value }) => value.trim());
 
     console.log(values);
@@ -129,11 +140,15 @@ async function deleteHero() {
     
 }); */
 
+document.querySelector("#hero-image-post").addEventListener("change", (e) => {
+    imageToUrl(e);
+})
 
 data.then((characters) => {
-	displayHero(characters);
+	displayData(characters);
 });
 
 document.getElementById("create-hero").addEventListener("click", () => {
-    postHero();
+    postData();
 });
+
