@@ -16,7 +16,7 @@ export function displayData(characters) {
 		cloneHero.querySelector(
 			"#hero-image"
 		).innerHTML = `<img src="data:image/gif;base64,${image}" width="200" height="200">`;
-        cloneHero.querySelector("#delete-button").innerHTML = id;
+        cloneHero.querySelector("#delete-button");
 
 		target.appendChild(cloneHero);
 

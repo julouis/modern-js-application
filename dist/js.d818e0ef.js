@@ -266,7 +266,7 @@ function displayData(characters) {
     cloneHero.querySelector("#hero-short-description").innerHTML = "".concat(shortDescription);
     cloneHero.querySelector("#hero-description").innerHTML = "".concat(description);
     cloneHero.querySelector("#hero-image").innerHTML = "<img src=\"data:image/gif;base64,".concat(image, "\" width=\"200\" height=\"200\">");
-    cloneHero.querySelector("#delete-button").innerHTML = id;
+    cloneHero.querySelector("#delete-button");
     target.appendChild(cloneHero);
     characterID.push(id);
   });
